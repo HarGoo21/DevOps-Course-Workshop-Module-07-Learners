@@ -27,3 +27,18 @@ jobs:
     - name: Run tests on typescript code
       working-directory: ./DotnetTemplate.Web
       run: npm t
+
+    - name: Report failures to Slack
+      if: failure()
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_USERNAME: CI Workflow Status
+        SLACK_MESSAGE: Workflow Failed
+
+    - name: Report Success to Slack
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_USERNAME: CI Workflow Status
+        SLACK_MESSAGE: Workflow Complete
