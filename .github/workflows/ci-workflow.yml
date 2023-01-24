@@ -7,3 +7,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+
+    - name: Build C# code
+      run: dotnet build
+
+    - name: Run C# tests
+      run: dotnet test
+
+    - name: Build typescript code
+      working-directory: ./DotnetTemplate.Web
+      run: |
+        npm install
+        npm run build
+
+    - name: Run linter on typescript code
+      working-directory: ./DotnetTemplate.Web
+      run: npm run lint
+
+    - name: Run tests on typescript code
+      working-directory: ./DotnetTemplate.Web
+      run: npm t
