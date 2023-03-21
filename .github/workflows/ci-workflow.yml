@@ -47,7 +47,7 @@ jobs:
     needs: build
     name: Push image to Docker Hub
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     steps:
     - uses: actions/checkout@v2
 
@@ -64,7 +64,7 @@ jobs:
     needs: [ build, push-image ]
     name: Re-deploy Azure Web App
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     steps:
     - name: Call Azure Web App redeployment webhook
       run: curl -dh --fail -X POST ${{ secrets.AZURE_WEBHOOK }}
