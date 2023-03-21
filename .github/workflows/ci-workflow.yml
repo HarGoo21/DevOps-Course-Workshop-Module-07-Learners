@@ -46,8 +46,6 @@ jobs:
   push-image:
     needs: build
     name: Push image to Docker Hub
-    image: docker
-    services: [ docker:dind ]
     steps:
     - name: Build image
       run: docker build --tag hargoo21/dotnettemplate:${GITHUB_REF#refs/heads/}
