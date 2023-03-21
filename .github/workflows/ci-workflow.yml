@@ -50,7 +50,7 @@ jobs:
     # if: github.ref == 'refs/heads/master'
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Build image
       run: docker build --tag hargoo21/dotnettemplate:${{ github.ref_name }} .
 
@@ -58,4 +58,4 @@ jobs:
       run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Push image to Docker Hub
-      run: docker push hargoo21/dotnettemplate:${ github.ref_name }
+      run: docker push hargoo21/dotnettemplate:${{ github.ref_name }}
