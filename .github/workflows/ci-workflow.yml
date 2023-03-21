@@ -47,13 +47,13 @@ jobs:
     needs: build
     name: Push image to Docker Hub
     runs-on: ubuntu-latest
-    # if: env.GITHUB_REF == 'refs/heads/master'
+    # if: github.ref == 'refs/heads/master'
     steps:
     - name: Build image
-      run: docker build --tag hargoo21/dotnettemplate:${{ env.GITHUB_REF_NAME }}
+      run: docker build --tag hargoo21/dotnettemplate:${{ github.ref_name }}
 
     - name: docker login
       run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Push image to Docker Hub
-      run: docker push hargoo21/dotnettemplate:${ env.GITHUB_REF_NAME }
+      run: docker push hargoo21/dotnettemplate:${ github.ref_name }
