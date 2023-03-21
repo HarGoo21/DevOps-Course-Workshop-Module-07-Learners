@@ -1,0 +1,70 @@
+name: Continuous Integration
+on: [push]
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build C# code
+      run: dotnet build
+
+    - name: Run C# tests
+      run: dotnet test
+
+    - name: Build typescript code
+      working-directory: ./DotnetTemplate.Web
+      run: |
+        npm install
+        npm run build
+
+    - name: Run linter on typescript code
+      working-directory: ./DotnetTemplate.Web
+      run: npm run lint
+
+    - name: Run tests on typescript code
+      working-directory: ./DotnetTemplate.Web
+      run: npm t
+
+    - name: Report failures to Slack
+      if: failure()
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_USERNAME: CI Workflow Status
+        SLACK_MESSAGE: Workflow Failed
+
+    - name: Report Success to Slack
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_USERNAME: CI Workflow Status
+        SLACK_MESSAGE: Workflow Complete
+
+  push-image:
+    needs: build
+    name: Push image to Docker Hub
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build image
+      run: docker build --tag hargoo21/dotnettemplate:${{ github.ref_name }} .
+
+    - name: docker login
+      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Push image to Docker Hub
+      run: docker push hargoo21/dotnettemplate:${{ github.ref_name }}
+
+  redeploy-azure:
+    needs: [ build, push-image ]
+    name: Re-deploy Azure Web App
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - name: Call Azure Web App redeployment webhook
+      run: curl -dh --fail -X POST ${{ secrets.AZURE_WEBHOOK }}
