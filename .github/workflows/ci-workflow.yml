@@ -46,6 +46,7 @@ jobs:
   push-image:
     needs: build
     name: Push image to Docker Hub
+    runs-on: ubuntu-latest
     steps:
     - name: Build image
       run: docker build --tag hargoo21/dotnettemplate:${GITHUB_REF#refs/heads/}
