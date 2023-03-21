@@ -50,7 +50,7 @@ jobs:
     # if: github.ref == 'refs/heads/master'
     steps:
     - name: Build image
-      run: docker build --tag hargoo21/dotnettemplate:${{ github.ref_name }}
+      run: docker build --tag hargoo21/dotnettemplate:${{ github.ref_name }} .
 
     - name: docker login
       run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
